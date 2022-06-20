@@ -1,4 +1,3 @@
-import Head from 'next/head'
 import { useRouter } from 'next/router'
 import { setCookie } from 'nookies'
 import { LoginForm } from '~/types/User'
@@ -12,12 +11,12 @@ import { NextPage } from 'next'
 import { SessionService } from '~/services/SessionService'
 import Link from 'next/link'
 
-const SignInPage: NextPage = () => {
+const SignUpPage: NextPage = () => {
   const router = useRouter()
   const [_, setUser] = useUser()
   const onSubmit = async (form: LoginForm) => {
     try {
-      const { token } = await UserService.login({ data: form })
+      const { token } = await UserService.create({ data: form })
       const user = await SessionService.get({})
       setCookie(null, 'token', token)
       setUser(user)
@@ -31,13 +30,13 @@ const SignInPage: NextPage = () => {
 
   return (
     <Box>
-      <Text textAlign='center'>ログインページ</Text>
+      <Text textAlign='center'>Sign up</Text>
       <Box className={styles.container}>
         <UserForm onSubmit={onSubmit}/>
-        <Link href='/sign-up'>Sign up</Link>
+        <Link href='/sign-in'>sign in</Link>
       </Box>
     </Box>
   )
 }
 
-export default SignInPage
+export default SignUpPage
