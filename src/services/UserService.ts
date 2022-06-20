@@ -13,7 +13,7 @@ export class UserService {
     return await axios.get<User>({ url: `/users/${id}`, config })
   }
 
-  public static async create({ data, config }: { data: User, config?: AxiosRequestConfig }): Promise<{token: string}> {
+  public static async create({ data, config }: { data: LoginForm, config?: AxiosRequestConfig }): Promise<{token: string}> {
     return await axios.post<{token: string}>({ url: '/users', data, config })
   }
 

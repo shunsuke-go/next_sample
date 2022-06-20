@@ -4,14 +4,16 @@ import { parseCookies } from 'nookies'
 import { SessionService } from '~/services/SessionService'
 import { AxiosError } from 'axios'
 import { useRouter } from 'next/router'
-import SignInPage from 'pages/sign-in'
+import { NextPage } from 'next'
+import { Spinner, Flex, Box } from '@chakra-ui/react'
 
-export const AuthPropider: React.FC<PropsWithChildren> = ({ children }) => {
+export const AuthPropider: NextPage<PropsWithChildren<{initialized: boolean}>> = ({ children, initialized }) => {
   const [user, setUser] = useUser()
   const router = useRouter()
 
   useEffect(() => {
     (async() => {
+      if (!initialized) return
       if (user) {
         router.push('/tasks')
         return
@@ -32,12 +34,16 @@ export const AuthPropider: React.FC<PropsWithChildren> = ({ children }) => {
         }
       }
     })()
-  }, [user])
+  }, [user, initialized])
 
 
-  return (
+  return initialized ? (
     <>
-      {user ? children : <SignInPage/>}
+      {children}
     </>
+  ) : (
+    <Flex justifyContent='center' h='100vh' alignItems='center'>
+      <Spinner color='blue.400' size='lg'/>
+    </Flex>
   )
 }
