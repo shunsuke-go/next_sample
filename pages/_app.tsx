@@ -1,8 +1,8 @@
+import React from 'react'
 import { Provider } from '~/components/layouts/Provider'
 import { AppProps } from 'next/app'
 
-function MyApp({ Component, pageProps }: AppProps) {
-
+const MyApp = ({ Component, pageProps }: AppProps) => {
   return (
     <Provider>
       <Component {...pageProps} />

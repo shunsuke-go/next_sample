@@ -1,3 +1,4 @@
+import React, { useCallback, useMemo } from 'react'
 import { NextPage } from 'next'
 import styles from '~/styles/Task.module.css'
 import { Task } from '~/types/Task'
@@ -6,7 +7,6 @@ import TaskList from '~/components/organisms/TaskList'
 import { useModal } from '~/hooks/use-modal'
 import { Box, Button, Flex, Text } from '@chakra-ui/react'
 import { useTasks } from '~/services/TaskService'
-import React, { useCallback, useMemo } from 'react'
 
 const TaskPage: NextPage = () => {
   const { data: tasks, error, mutate } = useTasks<Task[]>({})
