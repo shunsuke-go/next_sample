@@ -36,7 +36,7 @@ const TaskList: React.FC<Props> = ({ tasks }) => {
       setResolver({ exec: resolve })
     })
     if (shouldDelete) {
-      await TaskService.delete({ id: taskId })
+      await TaskService.delete(taskId)
       mutate('/tasks')
     }
     onClose()
@@ -50,7 +50,7 @@ const TaskList: React.FC<Props> = ({ tasks }) => {
 
   const onSubmitTask = useCallback(async (task: TaskFormType, id?: number) => {
     if (!id) return
-    await TaskService.update({ id, data: task })
+    await TaskService.update(id, task)
     onClose()
     mutate('/tasks')
   }, [])

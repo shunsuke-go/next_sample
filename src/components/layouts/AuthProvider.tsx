@@ -29,7 +29,7 @@ export const AuthPropider: NextPage<
         return
       }
       try {
-        const user = await SessionService.get({})
+        const user = await SessionService.get()
         setUser(user)
         router.push('/tasks')
       } catch (e) {

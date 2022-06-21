@@ -16,9 +16,10 @@ const SignInPage: NextPage = () => {
   const [_, setUser] = useUser()
   const onSubmit = async (form: LoginForm) => {
     try {
-      const { token } = await SessionService.login({ data: form })
-      const user = await SessionService.get({})
-      setCookie(null, 'token', token)
+      const response = await SessionService.login(form)
+      const user = await SessionService.get()
+      if (!response?.token) throw new AxiosError('error')
+      setCookie(null, 'token', response?.token)
       setUser(user)
       router.replace('/tasks')
     } catch(e) {

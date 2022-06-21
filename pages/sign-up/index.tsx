@@ -16,8 +16,8 @@ const SignUpPage: NextPage = () => {
   const [_, setUser] = useUser()
   const onSubmit = async (form: LoginForm) => {
     try {
-      const { token } = await UserService.create({ data: form })
-      const user = await SessionService.get({})
+      const { token } = await UserService.create(form)
+      const user = await SessionService.get()
       setCookie(null, 'token', token)
       setUser(user)
       router.replace('/tasks')

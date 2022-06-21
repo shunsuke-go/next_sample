@@ -12,31 +12,15 @@ export type TaskFormType = {
   isDone: string
 }
 export class TaskService {
-  public static async all({
-    config
-  }: {
-    config?: AxiosRequestConfig
-  }): Promise<Task[]> {
+  public static async all(config?: AxiosRequestConfig): Promise<Task[]> {
     return await axios.get<Task[]>({ url: '/tasks', config: auth(config) })
   }
 
-  public static async find({
-    id,
-    config
-  }: {
-    id: number
-    config?: AxiosRequestConfig
-  }): Promise<Task> {
+  public static async find(id: number, config?: AxiosRequestConfig): Promise<Task> {
     return await axios.get<Task>({ url: `/tasks/${id}`, config: auth(config) })
   }
 
-  public static async create({
-    data,
-    config
-  }: {
-    data: TaskFormType
-    config?: AxiosRequestConfig
-  }): Promise<void> {
+  public static async create(data: TaskFormType, config?: AxiosRequestConfig): Promise<void> {
     return await axios.post<void>({
       url: '/tasks',
       data,
@@ -44,15 +28,7 @@ export class TaskService {
     })
   }
 
-  public static async update ({
-    id,
-    data,
-    config
-  }: {
-    id: number
-    data: TaskFormType
-    config?: AxiosRequestConfig
-  }): Promise<void> {
+  public static async update (id: number, data: TaskFormType, config?: AxiosRequestConfig): Promise<void> {
     return await axios.patch<void>({
       url: `/tasks/${id}`,
       data,
@@ -60,13 +36,7 @@ export class TaskService {
     })
   }
 
-  public static async delete({
-    id,
-    config
-  }: {
-    id: number
-    config?: AxiosRequestConfig
-  }): Promise<void> {
+  public static async delete(id: number, config?: AxiosRequestConfig): Promise<void> {
     return await axios.delete<void>({
       url: `/tasks/${id}`,
       config: auth(config)
@@ -74,14 +44,8 @@ export class TaskService {
   }
 }
 
-export const useTasks = <T>({
-  config,
-  swrConfig
-}: {
-  config?: AxiosRequestConfig
-  swrConfig?: SWRConfiguration
-}): SWRResponse<T, any> => {
-  return useSWR('/tasks', async () => await TaskService.all({ config }), {
+export const useTasks = <T>(config?: AxiosRequestConfig, swrConfig?: SWRConfiguration): SWRResponse<T, any> => {
+  return useSWR('/tasks', async () => await TaskService.all(config), {
     ...swrConfig
   })
 }

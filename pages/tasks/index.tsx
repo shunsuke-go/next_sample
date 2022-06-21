@@ -12,7 +12,7 @@ const TaskPage: NextPage = () => {
   const { data: tasks, error, mutate } = useTasks<Task[]>({})
   const { onOpen, onClose, Modal } = useModal()
   const onClickCreate =  useCallback( async(form: TaskFormType) => {
-    await TaskService.create({ data: form })
+    await TaskService.create(form)
     onClose()
     mutate()
   }, [])
