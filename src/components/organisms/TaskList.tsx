@@ -1,9 +1,9 @@
 import { Flex, Box, Text, MenuButton, Menu, MenuList, MenuItem, Button } from '@chakra-ui/react'
-import React, { useState } from 'react'
+import React, { useCallback, useState } from 'react'
 import { KeyedMutator, mutate } from 'swr'
 import { BsThreeDotsVertical } from 'react-icons/bs'
 import { useModal } from '~/hooks/use-modal'
-import { TaskService } from '~/services/TaskService'
+import { TaskFormType, TaskService } from '~/services/TaskService'
 import styles from '~/styles/Task.module.css'
 import { Task } from '~/types/Task'
 import { TaskForm } from './TaskForm'
@@ -13,22 +13,45 @@ type Props = {
   mutate: KeyedMutator<Task[]>
 }
 const TaskList: React.FC<Props> = ({ tasks }) => {
-  const { isOpen, onClose, onOpen, Modal } = useModal()
+  const { onClose, onOpen, Modal } = useModal()
   const [resolver, setResolver] = useState({ exec: (val: boolean) => {}})
   const [modalKind, setModalKind] = useState<'delete' | 'edit'>()
+  const [selectedTask, setSelectedTask] = useState<Task>()
 
   const onOpenDeleteAlert = async (taskId: number) => {
     setModalKind('delete')
     onOpen()
-    const bool = await new Promise<boolean>(resolve => { setResolver({ exec: resolve }) })
-    if (bool) {
+    const shouldDelete = await new Promise<boolean>(resolve => { setResolver({ exec: resolve }) })
+    if (shouldDelete) {
       await TaskService.delete({ id: taskId })
       mutate('/tasks')
-      onClose()
-    } else {
-      onClose()
     }
+    onClose()
   }
+
+  const onOpenUpdateModal = async (task: Task) => {
+    setModalKind('edit')
+    setSelectedTask(task)
+    onOpen()
+  }
+
+  const onSubmitTask = useCallback(async (task: TaskFormType, id?: number) => {
+    if (!id) return
+    await TaskService.update({ id, data: task })
+    onClose()
+    mutate('/tasks')
+  }, [])
+
+  const ModalHeader = (
+    <Text>{modalKind === 'delete' ? 'delete' : 'edit'} a task</Text>
+  )
+
+  const ModalBody = (
+    modalKind === 'delete' ?
+      <Text>can I delete this task?</Text>
+    :
+      <TaskForm task={selectedTask} onSubmit={onSubmitTask} isUpdate={true}/>
+  )
 
   const ModalFooter = (
     modalKind === 'delete' ?
@@ -51,7 +74,7 @@ const TaskList: React.FC<Props> = ({ tasks }) => {
                   <BsThreeDotsVertical className={styles.threeDots}/>
                 </MenuButton>
                 <MenuList>
-                  <MenuItem>edit</MenuItem>
+                  <MenuItem onClick={() => onOpenUpdateModal(task)}>edit</MenuItem>
                   <MenuItem onClick={() => onOpenDeleteAlert(task.id)}>delete</MenuItem>
                 </MenuList>
               </Menu>
@@ -65,9 +88,9 @@ const TaskList: React.FC<Props> = ({ tasks }) => {
         </Flex>
       )}
       <Modal
-        modalHeader={<Text>{modalKind === 'delete' ? 'delete' : 'edit'} a task</Text>}
-        modalBody={modalKind === 'delete' ? <Text>can I delete this task?</Text> : <TaskForm onClick={() => {}}/>}
-        modalFooter={modalKind === 'delete' ? ModalFooter : <></>}
+        modalHeader={ModalHeader}
+        modalBody={ModalBody}
+        modalFooter={ModalFooter}
       />
       {Array(tasks?.length).fill(0).map((_, index) =>
         <Box className={styles.emptyCardContainer} key={index}></Box>
