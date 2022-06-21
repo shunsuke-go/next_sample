@@ -5,8 +5,7 @@ import { LoginForm } from '~/types/User'
 import { UserForm } from '~/components/organisms/UserForm'
 import { Box, Text } from '@chakra-ui/react'
 import { useUser } from '~/hooks/use-user'
-import styles from '~/styles/Home.module.css'
-import { UserService } from '~/services/UserService'
+import styles from 'styles/Home.module.css'
 import { AxiosError } from 'axios'
 import { NextPage } from 'next'
 import { SessionService } from '~/services/SessionService'
@@ -17,7 +16,7 @@ const SignInPage: NextPage = () => {
   const [_, setUser] = useUser()
   const onSubmit = async (form: LoginForm) => {
     try {
-      const { token } = await UserService.login({ data: form })
+      const { token } = await SessionService.login({ data: form })
       const user = await SessionService.get({})
       setCookie(null, 'token', token)
       setUser(user)

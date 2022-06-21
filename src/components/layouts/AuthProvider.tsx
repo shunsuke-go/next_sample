@@ -1,18 +1,23 @@
-import React, {PropsWithChildren, useEffect } from 'react'
+import React, { PropsWithChildren, useEffect } from 'react'
 import { useUser } from '~/hooks/use-user'
 import { parseCookies } from 'nookies'
 import { SessionService } from '~/services/SessionService'
 import { AxiosError } from 'axios'
 import { useRouter } from 'next/router'
 import { NextPage } from 'next'
-import { Spinner, Flex, Box } from '@chakra-ui/react'
+import { Spinner, Flex } from '@chakra-ui/react'
 
-export const AuthPropider: NextPage<PropsWithChildren<{initialized: boolean}>> = ({ children, initialized }) => {
+type Props = {
+  initialized: boolean
+}
+export const AuthPropider: NextPage<
+  PropsWithChildren<Props>
+> = ({ children, initialized }) => {
   const [user, setUser] = useUser()
   const router = useRouter()
 
   useEffect(() => {
-    (async() => {
+    (async () => {
       if (!initialized) return
       if (user) {
         router.push('/tasks')
@@ -27,7 +32,7 @@ export const AuthPropider: NextPage<PropsWithChildren<{initialized: boolean}>> =
         const user = await SessionService.get({})
         setUser(user)
         router.push('/tasks')
-      } catch(e) {
+      } catch (e) {
         if (e instanceof AxiosError) {
           console.log(e.response?.data?.message)
           router.push('sign-in')
@@ -36,14 +41,11 @@ export const AuthPropider: NextPage<PropsWithChildren<{initialized: boolean}>> =
     })()
   }, [user, initialized])
 
-
   return initialized ? (
-    <>
-      {children}
-    </>
+    <>{children}</>
   ) : (
-    <Flex justifyContent='center' h='100vh' alignItems='center'>
-      <Spinner color='blue.400' size='lg'/>
+    <Flex justifyContent="center" h="100vh" alignItems="center">
+      <Spinner color="blue.400" size="lg" />
     </Flex>
   )
 }
